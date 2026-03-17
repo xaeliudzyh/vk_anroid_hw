@@ -1,5 +1,13 @@
 package com.example.vkapplication.data
 
+interface AppRepository {
+    fun getApps(): List<AppItem>
+}
+
+object StaticAppRepository : AppRepository {
+    override fun getApps(): List<AppItem> = sampleApps
+}
+
 val sampleApps = listOf(
     AppItem(
         id = 1,

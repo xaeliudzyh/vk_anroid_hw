@@ -21,11 +21,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,23 +41,53 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.vkapplication.data.AppItem
-import com.example.vkapplication.data.sampleApps
 
 private val RuStoreBlue = Color(0xFF006AF5)
 
 @Composable
-fun AppListScreen(onAppClick: (Int) -> Unit) {
+fun AppListScreen(
+    onAppClick: (Int) -> Unit,
+    viewModel: AppListViewModel = viewModel()
+) {
+    val uiState by viewModel.uiState.collectAsState()
+    val snackbarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.events.collect { event ->
+            when (event) {
+                is AppListEvent.ShowSnackbar -> snackbarHostState.showSnackbar(event.message)
+            }
+        }
+    }
+
+    AppListContent(
+        state = uiState,
+        snackbarHostState = snackbarHostState,
+        onLogoClick = viewModel::onLogoClick,
+        onAppClick = onAppClick
+    )
+}
+
+@Composable
+private fun AppListContent(
+    state: AppListUiState,
+    snackbarHostState: SnackbarHostState,
+    onLogoClick: () -> Unit,
+    onAppClick: (Int) -> Unit
+) {
     Scaffold(
-        topBar = { RuStoreHeader() }
+        topBar = { RuStoreHeader(onLogoClick = onLogoClick) },
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            items(sampleApps, key = { it.id }) { app ->
+            items(state.apps, key = { it.id }) { app ->
                 AppListItem(app = app, onClick = { onAppClick(app.id) })
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 88.dp, end = 16.dp),
@@ -64,7 +100,7 @@ fun AppListScreen(onAppClick: (Int) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RuStoreHeader() {
+private fun RuStoreHeader(onLogoClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,7 +114,7 @@ private fun RuStoreHeader() {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            RuStoreLogo()
+            RuStoreLogo(onClick = onLogoClick)
             Spacer(modifier = Modifier.weight(1f))
             Box(
                 modifier = Modifier
@@ -94,8 +130,9 @@ private fun RuStoreHeader() {
 }
 
 @Composable
-private fun RuStoreLogo() {
+private fun RuStoreLogo(onClick: () -> Unit) {
     Row(
+        modifier = Modifier.clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {

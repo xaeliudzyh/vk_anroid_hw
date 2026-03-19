@@ -1,6 +1,6 @@
-package com.example.vkapplication.data
+package com.example.vkapplication.domain.model
 
-data class AppItem(
+data class App(
     val id: Int,
     val name: String,
     val developer: String,
@@ -13,3 +13,4 @@ data class AppItem(
     val iconUrl: String,
     val isFree: Boolean = true
 )
+

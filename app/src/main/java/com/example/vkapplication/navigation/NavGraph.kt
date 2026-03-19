@@ -6,8 +6,8 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.example.vkapplication.ui.appdetail.AppDetailScreen
-import com.example.vkapplication.ui.applist.AppListScreen
+import com.example.vkapplication.presentation.appdetail.AppDetailScreen
+import com.example.vkapplication.presentation.applist.AppListScreen
 
 private const val ROUTE_APP_LIST = "app_list"
 private const val ROUTE_APP_DETAIL = "app_detail"
@@ -38,4 +38,3 @@ fun AppNavGraph(navController: NavHostController) {
         }
     }
 }
-

@@ -8,4 +8,3 @@ class GetAppsUseCase(
 ) {
     operator fun invoke(): List<App> = repository.getApps()
 }
-

@@ -8,4 +8,3 @@ class GetAppByIdUseCase(
 ) {
     operator fun invoke(appId: Int): App? = repository.getAppById(appId)
 }
-

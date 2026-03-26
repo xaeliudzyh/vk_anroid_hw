@@ -49,7 +49,7 @@ private val RuStoreBlue = Color(0xFF006AF5)
 
 @Composable
 fun AppListScreen(
-    onAppClick: (Int) -> Unit,
+    onAppClick: (String) -> Unit,
     viewModel: AppListViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -76,7 +76,7 @@ private fun AppListContent(
     state: AppListUiState,
     snackbarHostState: SnackbarHostState,
     onLogoClick: () -> Unit,
-    onAppClick: (Int) -> Unit
+    onAppClick: (String) -> Unit
 ) {
     Scaffold(
         topBar = { RuStoreHeader(onLogoClick = onLogoClick) },

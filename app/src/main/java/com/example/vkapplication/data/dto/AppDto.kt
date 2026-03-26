@@ -1,7 +1,7 @@
 package com.example.vkapplication.data.dto
 
 data class AppDto(
-    val id: Int,
+    val id: String,
     val name: String,
     val developer: String,
     val category: String,

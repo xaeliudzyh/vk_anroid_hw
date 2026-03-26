@@ -6,5 +6,5 @@ import com.example.vkapplication.domain.repository.AppRepository
 class GetAppsUseCase(
     private val repository: AppRepository
 ) {
-    operator fun invoke(): List<App> = repository.getApps()
+    suspend operator fun invoke(): List<App> = repository.getApps()
 }

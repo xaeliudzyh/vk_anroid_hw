@@ -47,7 +47,7 @@ import com.example.vkapplication.domain.model.App
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AppDetailScreen(
-    appId: Int,
+    appId: String,
     onBackClick: () -> Unit,
     viewModel: AppDetailViewModel = koinViewModel()
 ) {

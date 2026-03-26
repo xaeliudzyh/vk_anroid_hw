@@ -1,5 +1,6 @@
 package com.example.vkapplication.navigation
 
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -22,15 +23,15 @@ fun AppNavGraph(navController: NavHostController) {
         composable(ROUTE_APP_LIST) {
             AppListScreen(
                 onAppClick = { appId ->
-                    navController.navigate("$ROUTE_APP_DETAIL/$appId")
+                    navController.navigate("$ROUTE_APP_DETAIL/${Uri.encode(appId)}")
                 }
             )
         }
         composable(
             route = "$ROUTE_APP_DETAIL/{$ARG_APP_ID}",
-            arguments = listOf(navArgument(ARG_APP_ID) { type = NavType.IntType })
+            arguments = listOf(navArgument(ARG_APP_ID) { type = NavType.StringType })
         ) { backStackEntry ->
-            val appId = backStackEntry.arguments?.getInt(ARG_APP_ID) ?: return@composable
+            val appId = backStackEntry.arguments?.getString(ARG_APP_ID) ?: return@composable
             AppDetailScreen(
                 appId = appId,
                 onBackClick = { navController.popBackStack() }

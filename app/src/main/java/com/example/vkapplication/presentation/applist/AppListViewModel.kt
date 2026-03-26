@@ -1,6 +1,7 @@
 package com.example.vkapplication.presentation.applist
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.vkapplication.domain.model.App
 import com.example.vkapplication.domain.usecase.GetAppsUseCase
 import kotlinx.coroutines.channels.Channel
@@ -8,9 +9,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 data class AppListUiState(
-    val apps: List<App> = emptyList()
+    val apps: List<App> = emptyList(),
+    val isLoading: Boolean = true
 )
 
 sealed interface AppListEvent {
@@ -27,7 +30,27 @@ class AppListViewModel(
     val events = eventChannel.receiveAsFlow()
 
     init {
-        _uiState.value = AppListUiState(apps = getAppsUseCase())
+        loadApps()
+    }
+
+    private fun loadApps() {
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isLoading = true)
+            runCatching { getAppsUseCase() }
+                .onSuccess { apps ->
+                    _uiState.value = AppListUiState(apps = apps, isLoading = false)
+                }
+                .onFailure { error ->
+                    _uiState.value = AppListUiState(isLoading = false)
+                    val details = error.message?.takeIf { it.isNotBlank() }
+                    val message = if (details != null) {
+                        "Не удалось загрузить каталог: $details"
+                    } else {
+                        "Не удалось загрузить каталог"
+                    }
+                    eventChannel.trySend(AppListEvent.ShowSnackbar(message = message))
+                }
+        }
     }
 
     fun onLogoClick() {

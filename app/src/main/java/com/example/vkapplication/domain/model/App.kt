@@ -1,7 +1,7 @@
 package com.example.vkapplication.domain.model
 
 data class App(
-    val id: Int,
+    val id: String,
     val name: String,
     val developer: String,
     val category: String,
@@ -13,4 +13,3 @@ data class App(
     val iconUrl: String,
     val isFree: Boolean = true
 )
-

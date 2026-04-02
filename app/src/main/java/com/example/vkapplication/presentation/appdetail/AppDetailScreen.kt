@@ -28,10 +28,10 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -49,13 +49,10 @@ import com.example.vkapplication.domain.model.App
 fun AppDetailScreen(
     appId: String,
     onBackClick: () -> Unit,
-    viewModel: AppDetailViewModel = koinViewModel()
+    viewModel: AppDetailViewModel = koinViewModel(parameters = { parametersOf(appId) })
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    LaunchedEffect(appId) {
-        viewModel.loadApp(appId)
-    }
 
     val app = uiState.app
 

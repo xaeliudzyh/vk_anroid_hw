@@ -3,7 +3,7 @@ package com.example.vkapplication.presentation.appdetail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.vkapplication.domain.model.App
-import com.example.vkapplication.domain.usecase.GetAppByIdUseCase
+import com.example.vkapplication.domain.usecase.GetAppDetailsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,18 +14,19 @@ data class AppDetailUiState(
 )
 
 class AppDetailViewModel(
-    private val getAppByIdUseCase: GetAppByIdUseCase
+    private val appId: String,
+    private val getAppDetailsUseCase: GetAppDetailsUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(AppDetailUiState())
     val uiState: StateFlow<AppDetailUiState> = _uiState.asStateFlow()
 
-    private var loadedAppId: String? = null
-
-    fun loadApp(appId: String) {
-        if (loadedAppId == appId && _uiState.value.app != null) return
-        loadedAppId = appId
+    init {
         viewModelScope.launch {
-            _uiState.value = AppDetailUiState(app = getAppByIdUseCase(appId))
+            loadApp()
         }
+    }
+
+    private suspend fun loadApp() {
+        _uiState.value = AppDetailUiState(app = getAppDetailsUseCase(appId))
     }
 }

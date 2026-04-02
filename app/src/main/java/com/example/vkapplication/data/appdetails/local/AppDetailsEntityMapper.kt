@@ -15,7 +15,8 @@ class AppDetailsEntityMapper {
         size = data.size,
         description = data.description,
         iconUrl = data.iconUrl,
-        isFree = data.isFree
+        isFree = data.isFree,
+        isInWishlist = data.isInWishlist
     )
 
     fun toDomain(entity: AppDetailsEntity): App = App(
@@ -29,7 +30,8 @@ class AppDetailsEntityMapper {
         size = entity.size,
         description = entity.description,
         iconUrl = entity.iconUrl,
-        isFree = entity.isFree
+        isFree = entity.isFree,
+        isInWishlist = entity.isInWishlist
     )
 }
 

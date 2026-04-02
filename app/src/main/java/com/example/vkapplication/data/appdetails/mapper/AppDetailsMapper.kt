@@ -15,7 +15,8 @@ class AppDetailsMapper {
         size = dto.size.orEmpty(),
         description = dto.description.orEmpty(),
         iconUrl = dto.iconUrl.orEmpty(),
-        isFree = dto.isFree ?: true
+        isFree = dto.isFree ?: true,
+        isInWishlist = false
     )
 }
 

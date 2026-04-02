@@ -11,5 +11,6 @@ data class App(
     val size: String,
     val description: String,
     val iconUrl: String,
-    val isFree: Boolean = true
+    val isFree: Boolean = true,
+    val isInWishlist: Boolean = false
 )

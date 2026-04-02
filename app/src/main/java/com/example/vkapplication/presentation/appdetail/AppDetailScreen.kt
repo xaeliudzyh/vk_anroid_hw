@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,8 +32,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import org.koin.androidx.compose.koinViewModel
-import org.koin.core.parameter.parametersOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,6 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.vkapplication.domain.model.App
+import org.koin.androidx.compose.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -52,8 +54,6 @@ fun AppDetailScreen(
     viewModel: AppDetailViewModel = koinViewModel(parameters = { parametersOf(appId) })
 ) {
     val uiState by viewModel.uiState.collectAsState()
-
-
     val app = uiState.app
 
     Scaffold(
@@ -67,31 +67,63 @@ fun AppDetailScreen(
                             contentDescription = "Назад"
                         )
                     }
+                },
+                actions = {
+                    IconButton(onClick = viewModel::toggleWishlist) {
+                        Icon(
+                            imageVector = if (uiState.isInWishlist) {
+                                Icons.Filled.Favorite
+                            } else {
+                                Icons.Outlined.FavoriteBorder
+                            },
+                            contentDescription = if (uiState.isInWishlist) {
+                                "Удалить из вишлиста"
+                            } else {
+                                "Добавить в вишлист"
+                            },
+                            tint = if (uiState.isInWishlist) Color(0xFFE53935) else MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                 }
             )
         }
     ) { innerPadding ->
-        if (app == null) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(text = "Приложение не найдено")
+        when {
+            uiState.isError && app == null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Не удалось загрузить приложение")
+                }
             }
-        } else {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
-            ) {
-                AppHeader(app = app)
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                RatingStatsRow(app = app)
-                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
-                AppDescription(description = app.description)
+
+            app == null -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(text = "Загрузка...")
+                }
+            }
+
+            else -> {
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .verticalScroll(rememberScrollState())
+                ) {
+                    AppHeader(app = app)
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                    RatingStatsRow(app = app)
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                    AppDescription(description = app.description)
+                }
             }
         }
     }

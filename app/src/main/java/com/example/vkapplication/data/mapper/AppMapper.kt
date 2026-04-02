@@ -15,7 +15,8 @@ fun NetworkAppDto.toData(): AppDto = AppDto(
     size = size.orEmpty(),
     description = description.orEmpty(),
     iconUrl = iconUrl.orEmpty(),
-    isFree = isFree ?: true
+    isFree = isFree ?: true,
+    isInWishlist = false
 )
 
 fun AppDto.toDomain(): App = App(
@@ -29,5 +30,6 @@ fun AppDto.toDomain(): App = App(
     size = size,
     description = description,
     iconUrl = iconUrl,
-    isFree = isFree
+    isFree = isFree,
+    isInWishlist = isInWishlist
 )

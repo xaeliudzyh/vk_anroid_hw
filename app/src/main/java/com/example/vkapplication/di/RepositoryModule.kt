@@ -11,6 +11,8 @@ import com.example.vkapplication.domain.repository.AppDetailsRepository
 import com.example.vkapplication.domain.repository.AppRepository
 import com.example.vkapplication.domain.usecase.GetAppDetailsUseCase
 import com.example.vkapplication.domain.usecase.GetAppsUseCase
+import com.example.vkapplication.domain.usecase.ObserveAppDetailsUseCase
+import com.example.vkapplication.domain.usecase.ToggleFavoriteUseCase
 import com.example.vkapplication.presentation.appdetail.AppDetailViewModel
 import com.example.vkapplication.presentation.applist.AppListViewModel
 import org.koin.android.ext.koin.androidContext
@@ -34,7 +36,7 @@ val appModule = module {
             androidContext(),
             AppDatabase::class.java,
             AppDatabase.DATABASE_NAME
-        ).build()
+        ).fallbackToDestructiveMigration(true).build()
     }
     single { get<AppDatabase>().appDetailsDao() }
     single { AppDetailsMapper() }
@@ -44,6 +46,8 @@ val appModule = module {
     single { AppDetailsRepositoryImpl(get(), get(), get(), get()) } bind AppDetailsRepository::class
     factory { GetAppsUseCase(get()) }
     factory { GetAppDetailsUseCase(get()) }
+    factory { ObserveAppDetailsUseCase(get()) }
+    factory { ToggleFavoriteUseCase(get()) }
     viewModel { AppListViewModel(get()) }
-    viewModel { (appId: String) -> AppDetailViewModel(appId, get()) }
+    viewModel { (appId: String) -> AppDetailViewModel(appId, get(), get(), get()) }
 }
